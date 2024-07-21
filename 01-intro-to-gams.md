@@ -72,7 +72,7 @@ mcycle %>%
 
     ## `geom_smooth()` using formula = 'y ~ x'
 
-![](/Users/darrenwong/Documents/Projects/gam-course/rendered/01-intro-to-gams_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+![](01-intro-to-gams_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
 
 - Now we’ll fit a GAM using the `mgcv` package, we can see that the
   fitted model is much closer to the data at more x-values.
@@ -85,7 +85,7 @@ gam_mod <- mgcv::gam(accel ~ s(times), data = mcycle)
 draw(gam_mod, residuals = T)
 ```
 
-![](/Users/darrenwong/Documents/Projects/gam-course/rendered/01-intro-to-gams_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+![](01-intro-to-gams_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 ## Anatomy of a GAM
 
@@ -203,7 +203,7 @@ gam_mod_s2 <- gam(accel ~ s(times), data = mcycle, sp = 0.1)
   plot_layout(nrow = 3)
 ```
 
-![](/Users/darrenwong/Documents/Projects/gam-course/rendered/01-intro-to-gams_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](01-intro-to-gams_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 - Manually setting the number of basis functions in each smooth
 
@@ -233,7 +233,7 @@ gam_mod_k50 <- gam(accel ~ s(times, k = 50), data = mcycle, sp = 0.0001, method 
   plot_layout(nrow = 3)
 ```
 
-![](/Users/darrenwong/Documents/Projects/gam-course/rendered/01-intro-to-gams_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](01-intro-to-gams_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 # Multivariate GAMs
 
@@ -254,7 +254,7 @@ mpg_mod <- gam(
 draw(mpg_mod, residuals = T)
 ```
 
-![](/Users/darrenwong/Documents/Projects/gam-course/rendered/01-intro-to-gams_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](01-intro-to-gams_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 - Both the effects of weight and price on `hw.mpg` are non-linear, and
   they are added together to get the final prediction (where the
@@ -304,7 +304,7 @@ draw(mpg_mod_byfuel, residuals = T) +
   plot_layout(ncol = 3)
 ```
 
-![](/Users/darrenwong/Documents/Projects/gam-course/rendered/01-intro-to-gams_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](01-intro-to-gams_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ## Example - `mpg` data
 
@@ -316,7 +316,7 @@ mpg_mod <- gam(city.mpg ~ s(weight) + s(length) + s(price), data = mpg, method =
 draw(mpg_mod, residuals = T) + plot_layout(ncol = 3, nrow = 1)
 ```
 
-![](/Users/darrenwong/Documents/Projects/gam-course/rendered/01-intro-to-gams_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](01-intro-to-gams_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 - Adding categorical fixed effects for `fuel`, `drive`, and `style`
 
@@ -328,7 +328,7 @@ mpg_mod2 <- gam(city.mpg ~ s(weight) + s(length) + s(price) + fuel + drive + sty
   (draw(mpg_mod2 %>% parametric_effects()) + plot_layout(ncol = 3, nrow = 1))
 ```
 
-![](/Users/darrenwong/Documents/Projects/gam-course/rendered/01-intro-to-gams_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](01-intro-to-gams_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ``` r
 # # ...then we'd do this
@@ -349,11 +349,11 @@ mpg_mod3 <- gam(city.mpg ~ s(weight, by = drive) + s(length, by = drive) + s(pri
 draw(mpg_mod3, residuals = T) & scale_x_continuous(labels = scales::comma)
 ```
 
-![](/Users/darrenwong/Documents/Projects/gam-course/rendered/01-intro-to-gams_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](01-intro-to-gams_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ``` r
 # Plotting fixed/parametric effect
 draw(mpg_mod3 %>% parametric_effects())
 ```
 
-![](/Users/darrenwong/Documents/Projects/gam-course/rendered/01-intro-to-gams_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](01-intro-to-gams_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->

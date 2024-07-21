@@ -2,8 +2,6 @@
 title: "01 Introduction to GAMs"
 author: "Darren Wong"
 date: "2024-07-20"
-knit: (function(inputFile, encoding) {
-  rmarkdown::render(inputFile, encoding = encoding, output_dir = "rendered") })
 output:
   github_document:
     toc: true
