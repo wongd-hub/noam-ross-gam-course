@@ -29,6 +29,11 @@
       "Version": "1.9-1",
       "Source": "Repository"
     },
+    "patchwork": {
+      "Package": "patchwork",
+      "Version": "1.2.0",
+      "Source": "Repository"
+    },
     "renv": {
       "Package": "renv",
       "Version": "0.17.3",

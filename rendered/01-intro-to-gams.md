@@ -12,6 +12,12 @@ Darren Wong
 - [Basis functions and smoothing](#basis-functions-and-smoothing)
   - [Big Wiggly Style (Wiggliness)](#big-wiggly-style-wiggliness)
   - [Number of basis functions](#number-of-basis-functions)
+  - [Example - setting complexity with the motorcycle
+    model](#example---setting-complexity-with-the-motorcycle-model)
+- [Multivariate GAMs](#multivariate-gams)
+  - [Continuous variables](#continuous-variables)
+  - [Categorical variables](#categorical-variables)
+  - [Example - `mpg` data](#example---mpg-data)
 
 # Links
 
@@ -164,3 +170,190 @@ gam(y ~ s(x), data = dat, method = "REML")
 gam(y ~ s(x, k = 3), data = dat, method = "REML")
 gam(y ~ s(x, k = 10), data = dat, method = "REML")
 ```
+
+## Example - setting complexity with the motorcycle model
+
+- Here we’ll manually set the smoothing parameter that controls
+  wiggliness
+
+``` r
+# Fix the smoothing parameter at 0
+gam_mod_s0 <- gam(accel ~ s(times), data = mcycle, sp = 0)
+
+# Fix the smoothing parameter at 0.0001
+gam_mod_s1 <- gam(accel ~ s(times), data = mcycle, sp = 0.0001)
+
+# Fix the smoothing parameter at 0.1
+gam_mod_s2 <- gam(accel ~ s(times), data = mcycle, sp = 0.1)
+
+
+# Visualize the GAMs
+(
+  draw(gam_mod_s0, residuals = T) +
+    labs(title = 'lambda = 0', x = 'Times')
+) + 
+(
+  draw(gam_mod_s1, residuals = T) +
+    labs(title = 'lambda = 0.0001', x = 'Times')
+) + 
+( 
+  draw(gam_mod_s2, residuals = T) +
+    labs(title = 'lambda = 0.1', x = 'Times')
+) + 
+  plot_layout(nrow = 3)
+```
+
+![](/Users/darrenwong/Documents/Projects/gam-course/rendered/01-intro-to-gams_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+- Manually setting the number of basis functions in each smooth
+
+``` r
+# Fit a GAM with 3 basis functions
+gam_mod_k3 <- gam(accel ~ s(times, k = 3), data = mcycle)
+
+# Fit with 20 basis functions
+gam_mod_k20 <- gam(accel ~ s(times, k = 20), data = mcycle)
+
+# Fit with 50 basis functions
+gam_mod_k50 <- gam(accel ~ s(times, k = 50), data = mcycle, sp = 0.0001, method = 'REML')
+
+# Visualize the GAMs
+(
+  draw(gam_mod_k3, residuals = T) +
+    labs(title = '3 basis funcs', x = 'Times')
+) + 
+( 
+  draw(gam_mod_k20, residuals = T) +
+    labs(title = '20 basis funcs', x = 'Times')
+) + 
+( 
+  draw(gam_mod_k50, residuals = T) +
+    labs(title = '50 basis funcs, sp = 0.0001', x = 'Times', subtitle = 'Recipe for overfitting')
+) + 
+  plot_layout(nrow = 3)
+```
+
+![](/Users/darrenwong/Documents/Projects/gam-course/rendered/01-intro-to-gams_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+# Multivariate GAMs
+
+- We can also fit GAMs with multiple predictors; including smooths,
+  linear effects, and continuous or categorical variables.
+
+## Continuous variables
+
+``` r
+data("mpg", package = "gamair")
+
+mpg_mod <- gam(
+  hw.mpg ~ s(weight) + s(length), 
+  data   = mpg,
+  method = "REML"
+)
+
+draw(mpg_mod, residuals = T)
+```
+
+![](/Users/darrenwong/Documents/Projects/gam-course/rendered/01-intro-to-gams_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+- Both the effects of weight and price on `hw.mpg` are non-linear, and
+  they are added together to get the final prediction (where the
+  *additive* in Generalised Additive Model comes from).
+
+  - `length` has a generally increasing relationship with `hw.mpg`, but
+    is generally weaker than the effect of `weight`.
+
+- We can also set the relationship to strictly linear, however we don’t
+  often do this in practice since if the relationship were truly linear,
+  the automatic smoothing would force a linear shape.
+
+  - We can also set `sp = 1000` in `s(length)` to force a linear
+    relationship.
+
+## Categorical variables
+
+- We can also model categorical variables, and this is where linear
+  terms are more useful to us. When we include a categorical variable,
+  the model fits a fixed effect for each value of the variable.
+
+  - The categorical variable *must* be stored as a factor
+  - Note the non-linear effect of `weight` applies to both fuel types;
+    this is similar to a fixed-slope, varying intercept model
+
+``` r
+gam(hw.mpg ~ s(weight) + fuel, data = mpg, method = "REML")
+```
+
+![](images/clipboard-4193429101.png)
+
+- If we wanted, we could vary the effect of weight *by* different fuel
+  types as well; however if we do this, we generally also want to retain
+  the by-variable as a fixed effect. This is in case the different
+  categories are different in overall mean, as well as their non-linear
+  relationship on the dependent variable.
+
+``` r
+mpg_mod_byfuel <- gam(
+    hw.mpg ~ s(weight, by = fuel) + fuel, 
+    data   = mpg,
+    method = "REML"
+)
+
+draw(mpg_mod_byfuel, residuals = T) +
+  draw(mpg_mod_byfuel %>% parametric_effects()) +
+  plot_layout(ncol = 3)
+```
+
+![](/Users/darrenwong/Documents/Projects/gam-course/rendered/01-intro-to-gams_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+## Example - `mpg` data
+
+- Adding smooths for each of `weight`, `length`, `price`
+
+``` r
+mpg_mod <- gam(city.mpg ~ s(weight) + s(length) + s(price), data = mpg, method = "REML")
+
+draw(mpg_mod, residuals = T) + plot_layout(ncol = 3, nrow = 1)
+```
+
+![](/Users/darrenwong/Documents/Projects/gam-course/rendered/01-intro-to-gams_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+- Adding categorical fixed effects for `fuel`, `drive`, and `style`
+
+``` r
+mpg_mod2 <- gam(city.mpg ~ s(weight) + s(length) + s(price) + fuel + drive + style, data = mpg, method = "REML")
+
+# This works, but if we wanted to use the base `mgcv::plot.gam()` method...
+(draw(mpg_mod2, residuals = T) + plot_layout(ncol = 3, nrow = 1)) / 
+  (draw(mpg_mod2 %>% parametric_effects()) + plot_layout(ncol = 3, nrow = 1))
+```
+
+![](/Users/darrenwong/Documents/Projects/gam-course/rendered/01-intro-to-gams_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+``` r
+# # ...then we'd do this
+# draw(mpg_mod2, residuals = T) +
+#   ~plot(mpg_mod2, select = 4, all.terms = T) +
+#   ~plot(mpg_mod2, select = 5, all.terms = T) +
+#   ~plot(mpg_mod2, select = 6, all.terms = T) +
+#   plot_layout(nrow = 2)
+```
+
+- Adding smooths for `weight`, `length`, and `price`, but splitting each
+  by `drive`
+
+``` r
+mpg_mod3 <- gam(city.mpg ~ s(weight, by = drive) + s(length, by = drive) + s(price, by = drive) + drive, data = mpg, method = "REML")
+
+# Plotting smooth terms
+draw(mpg_mod3, residuals = T) & scale_x_continuous(labels = scales::comma)
+```
+
+![](/Users/darrenwong/Documents/Projects/gam-course/rendered/01-intro-to-gams_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+``` r
+# Plotting fixed/parametric effect
+draw(mpg_mod3 %>% parametric_effects())
+```
+
+![](/Users/darrenwong/Documents/Projects/gam-course/rendered/01-intro-to-gams_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
