@@ -1,6 +1,5 @@
 ---
 title: "03 Spatial GAMs and Interactions"
-author: "Darren Wong"
 date: "2024-11-17"
 output:
   github_document:
@@ -77,7 +76,7 @@ summary(cad_gam)
 ```{r}
 plot(cad_gam, pages = 1)
 
-# We can plot the 2D contour map using `gratia` with:
+# We can plot the 2D contour map using the gratia 📦 with:
 # gratia::draw(cad_gam, residuals = T, select = 1, ...)
 
 plot(cad_gam, scheme = 1, select = 1)

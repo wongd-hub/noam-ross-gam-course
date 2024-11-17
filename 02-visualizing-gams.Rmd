@@ -1,6 +1,5 @@
 ---
 title: "02 Interpreting and Visualizing GAMs"
-author: "Darren Wong"
 date: "2024-07-21"
 output:
   github_document:
