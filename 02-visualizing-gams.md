@@ -247,10 +247,15 @@ gam.check(mod_hwy_1)
     ## Basis dimension (k) checking results. Low p-value (k-index<1) may
     ## indicate that k is too low, especially if edf is close to k'.
     ## 
-    ##             k'  edf k-index p-value   
-    ## s(weight) 2.00 1.96    0.79   0.005 **
+    ##             k'  edf k-index p-value    
+    ## s(weight) 2.00 1.96    0.79  <2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+``` r
+# Note we can get the same diagnostic graphs with `gratia::appraise()`
+# gratia::appraise(mod_hwy_1)
+```
 
 ## Pitfall: Concurvity
 

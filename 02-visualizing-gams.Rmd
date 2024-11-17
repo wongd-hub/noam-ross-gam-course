@@ -152,6 +152,9 @@ plot(mod_hwy_1, pages = 1, residuals = T, se = T)
 
 ```{r}
 gam.check(mod_hwy_1)
+
+# Note we can get the same diagnostic graphs with `gratia::appraise()`
+# gratia::appraise(mod_hwy_1)
 ```
 
 ## Pitfall: Concurvity
